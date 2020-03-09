@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="changgou_service:war">
+    <output-path>$PROJECT_DIR$/changgou_service/target</output-path>
+    <root id="archive" name="changgou_service-1.0-SNAPSHOT.war">
+      <element id="artifact" artifact-name="changgou_service:war exploded" />
+    </root>
+  </artifact>
+</component>
