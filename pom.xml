@@ -27,7 +27,8 @@
 
     <properties>
         <skipTests>true</skipTests>
-        <host_ip_address>35.193.67.118/</host_ip_address>
+        <eureka_ip_address>35.193.67.118</eureka_ip_address>
+        <database_ip_address>35.193.67.118</database_ip_address>
     </properties>
 
     <!--依赖包-->

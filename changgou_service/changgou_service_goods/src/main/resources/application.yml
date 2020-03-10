@@ -5,13 +5,13 @@ spring:
     name: goods
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://${host_ip_address}/changgou_goods?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
+    url: jdbc:mysql://35.193.67.118/changgou_goods?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
     username: root
     password: 123456
 eureka:
   client:
     service-url:
-      defaultZone: http://${host_ip_address}:6868/eureka
+      defaultZone: http://35.193.67.118:6868/eureka
   instance:
     prefer-ip-address: true
 feign:
