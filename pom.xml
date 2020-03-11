@@ -8,6 +8,16 @@
     <artifactId>changgou_parent</artifactId>
     <packaging>pom</packaging>
     <version>1.0-SNAPSHOT</version>
+    <modules>
+        <module>changgou_eureka</module>
+        <module>changgou_gateway</module>
+        <module>changgou_service</module>
+        <module>changgou_service_api</module>
+        <module>changgou_web</module>
+        <module>changgou_common</module>
+        <module>changgou_common_db</module>
+		<module>changgou_canal</module>
+    </modules>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -15,20 +25,8 @@
         <version>2.1.4.RELEASE</version>
     </parent>
 
-    <modules>
-        <module>changgou_gateway</module>
-        <module>changgou_service</module>
-        <module>changgou_service_api</module>
-        <module>changgou_web</module>
-        <module>changgou_common_db</module>
-        <module>changgou_eureka</module>
-        <module>changgou_common</module>
-    </modules>
-
     <properties>
         <skipTests>true</skipTests>
-        <eureka_ip_address>35.193.67.118</eureka_ip_address>
-        <database_ip_address>35.193.67.118</database_ip_address>
     </properties>
 
     <!--依赖包-->
@@ -52,6 +50,5 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-
 
 </project>

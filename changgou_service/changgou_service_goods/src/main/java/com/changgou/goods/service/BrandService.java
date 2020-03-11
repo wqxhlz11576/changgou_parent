@@ -1,19 +1,69 @@
 package com.changgou.goods.service;
 
-import com.changgou.pojo.Brand;
+import com.changgou.goods.pojo.Brand;
 import com.github.pagehelper.Page;
 
 import java.util.List;
 import java.util.Map;
 
-/**
- * Created by wq120 on 3/8/2020.
- */
 public interface BrandService {
+
+    /***
+     * 查询所有
+     * @return
+     */
     List<Brand> findAll();
+
+    /**
+     * 根据ID查询
+     * @param id
+     * @return
+     */
     Brand findById(Integer id);
-    void insert(Brand brand);
+
+    /***
+     * 新增
+     * @param brand
+     */
+    void add(Brand brand);
+
+    /***
+     * 修改
+     * @param brand
+     */
     void update(Brand brand);
+
+    /***
+     * 删除
+     * @param id
+     */
     void delete(Integer id);
-    Page findPageBySearch(Map<String, String> searchMap, Integer page, Integer pageSize);
+
+    /***
+     * 多条件搜索
+     * @param searchMap
+     * @return
+     */
+    List<Brand> findList(Map<String, Object> searchMap);
+
+    /***
+     * 分页查询
+     * @param page
+     * @param size
+     * @return
+     */
+    Page<Brand> findPage(int page, int size);
+
+    /***
+     * 多条件分页查询
+     * @param searchMap
+     * @param page
+     * @param size
+     * @return
+     */
+    Page<Brand> findPage(Map<String, Object> searchMap, int page, int size);
+
+
+
+
 }

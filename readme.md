@@ -1,3 +1,0 @@
-Test git:
-
-Test hook
