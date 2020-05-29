@@ -1,14 +1,23 @@
 package com.changgou.order.service.impl;
 
+import com.changgou.goods.feign.SkuFeign;
+import com.changgou.order.dao.OrderItemMapper;
+import com.changgou.order.dao.OrderLogMapper;
 import com.changgou.order.dao.OrderMapper;
+import com.changgou.order.pojo.OrderItem;
+import com.changgou.order.pojo.OrderLog;
+import com.changgou.order.service.CartService;
 import com.changgou.order.service.OrderService;
 import com.changgou.order.pojo.Order;
+import com.changgou.util.IdWorker;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -17,6 +26,24 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private OrderMapper orderMapper;
+    
+    @Autowired
+    private CartService cartService;
+
+    @Autowired
+    private IdWorker idWorker;
+
+    @Autowired
+    private OrderItemMapper orderItemMapper;
+
+    @Autowired
+    private RedisTemplate redisTemplate;
+
+    @Autowired
+    private SkuFeign skuFeign;
+
+    @Autowired
+    private OrderLogMapper orderLogMapper;
 
     /**
      * 查询全部列表
@@ -43,8 +70,40 @@ public class OrderServiceImpl implements OrderService {
      * @param order
      */
     @Override
-    public void add(Order order){
-        orderMapper.insert(order);
+    public String add(Order order){
+        Map cartMap = cartService.getCartItemList(order.getUsername());
+        List<OrderItem> orderItems = (List<OrderItem>) cartMap.get("orderItemList");
+
+        /**
+         *
+         */
+        order.setTotalNum((Integer) cartMap.get("totalNum"));
+        order.setTotalMoney((Integer) cartMap.get("totalMoney"));
+        order.setPayMoney((Integer) cartMap.get("totalMoney"));
+        order.setCreateTime(new Date());
+        order.setUpdateTime(order.getCreateTime());
+        order.setBuyerRate("0");        //0:未评价，1：已评价
+        order.setSourceType("1");       //来源，1：WEB
+        order.setOrderStatus("0");      //0:未完成,1:已完成，2：已退货
+        order.setPayStatus("0");        //0:未支付，1：已支付，2：支付失败
+        order.setConsignStatus("0");    //0:未发货，1：已发货，2：已收货
+        String orderId = idWorker.nextId()+"";
+        order.setId(orderId);
+        int count = orderMapper.insertSelective(order);
+
+        for (OrderItem item : orderItems) {
+            item.setId(String.valueOf(idWorker.nextId()));
+            item.setIsReturn("0");
+            item.setOrderId(order.getId());
+            orderItemMapper.insertSelective(item);
+        }
+
+        skuFeign.decrCount(order.getUsername());
+
+        redisTemplate.delete("cart_" + order.getUsername());
+
+        return orderId;
+
     }
 
 
@@ -104,6 +163,28 @@ public class OrderServiceImpl implements OrderService {
         return (Page<Order>)orderMapper.selectByExample(example);
     }
 
+    @Override
+    public void updatePayStatus(String orderId, String transactionId) {
+        Order order = orderMapper.selectByPrimaryKey(orderId);
+        if (order != null && "0".equals(order.getPayStatus())) {  //存在订单且状态为0
+            order.setPayStatus("1");
+            order.setOrderStatus("1");
+            order.setUpdateTime(new Date());
+            order.setPayTime(new Date());
+            order.setTransactionId(transactionId);//微信返回的交易流水号
+            orderMapper.updateByPrimaryKeySelective(order);
+            //记录订单变动日志
+            OrderLog orderLog = new OrderLog();
+            orderLog.setId(idWorker.nextId() + "");
+            orderLog.setOperater("system");// 系统
+            orderLog.setOperateTime(new Date());//当前日期
+            orderLog.setOrderStatus("1");
+            orderLog.setPayStatus("1");
+            orderLog.setRemarks("支付流水号" + transactionId);
+            orderLog.setOrderId(order.getId());
+            orderLogMapper.insert(orderLog);
+        }
+    }
     /**
      * 构建查询对象
      * @param searchMap

@@ -5,15 +5,15 @@ spring:
     name: system
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://192.168.200.128:3306/changgou_system?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
+    url: jdbc:mysql://35.193.67.118:3306/changgou_system?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
     username: root
-    password: root
+    password: 123456
   main:
     allow-bean-definition-overriding: true #当遇到同样名字的时候，是否允许覆盖注册
 eureka:
   client:
     service-url:
-      defaultZone: http://127.0.0.1:6868/eureka
+      defaultZone: http://35.193.67.118:6868/eureka
   instance:
     prefer-ip-address: true
 feign:

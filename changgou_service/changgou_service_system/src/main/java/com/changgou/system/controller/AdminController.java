@@ -1,14 +1,22 @@
 package com.changgou.system.controller;
+import com.alibaba.fastjson.JSON;
 import com.changgou.entity.PageResult;
 import com.changgou.entity.Result;
 import com.changgou.entity.StatusCode;
 import com.changgou.system.service.AdminService;
-import com.changgou.pojo.Admin;
+import com.changgou.system.pojo.Admin;
+import com.changgou.system.util.JwtUtil;
 import com.github.pagehelper.Page;
+import io.jsonwebtoken.JwtBuilder;
+import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
+
 @RestController
 @CrossOrigin
 @RequestMapping("/admin")
@@ -103,5 +111,28 @@ public class AdminController {
         return new Result(true,StatusCode.OK,"查询成功",pageResult);
     }
 
+    /**
+     * 管理员登录
+     * @param admin
+     * @return
+     */
+    @PostMapping("/login")
+    public Result login(@RequestBody Admin admin) {
+        Boolean isTrue = adminService.login(admin);
+
+        /**
+         * create token
+         */
+        if (isTrue) {
+            Map<String, String> resultMap = new HashMap<>();
+            resultMap.put("username", admin.getLoginName());
+            String subject = JSON.toJSONString(resultMap);
+            String token = JwtUtil.createJWT(UUID.randomUUID().toString(), subject, null);
+            resultMap.put("token", token);
+            return new Result(true, StatusCode.OK, "Login success", token);
+        }
+
+        return new Result(false, StatusCode.ACCESSERROR, "Login error");
+    }
 
 }

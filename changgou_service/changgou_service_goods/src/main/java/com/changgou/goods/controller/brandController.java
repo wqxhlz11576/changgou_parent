@@ -103,5 +103,15 @@ public class BrandController {
         return new Result(true,StatusCode.OK,"查询成功",pageResult);
     }
 
+    /***
+     * Search for  brand according to the category name
+     *
+     */
+    @GetMapping("/categoryName/{categoryName}")
+    public List<Brand> findByCategoryName(@PathVariable("categoryName") String categoryName) {
+        List<Brand> brandList = brandService.findByCategoryName(categoryName);
+        return brandList;
+    }
+
 
 }

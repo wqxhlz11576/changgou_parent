@@ -1,0 +1,20 @@
+server:
+  port: 9010
+spring:
+  application:
+    name: pay
+  rabbitmq:
+    host: 35.193.67.118
+    password: WQxhlz922100!
+    username: guest
+  main:
+    allow-bean-definition-overriding: true #当遇到同样名字的时候，是否允许覆盖注册
+eureka:
+  client:
+    service-url:
+      defaultZone: http://35.193.67.118:6868/eureka
+  instance:
+    prefer-ip-address: true
+
+wxpay:
+  notify_url: http://qiaoshopping.cross.echosite.cn/wxpay/notify #回调地址

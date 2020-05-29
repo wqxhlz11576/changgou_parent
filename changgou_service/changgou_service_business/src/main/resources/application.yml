@@ -7,7 +7,10 @@ spring:
     driver-class-name: com.mysql.jdbc.Driver
     url: jdbc:mysql://35.193.67.118:3306/changgou_business?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
     username: root
-    password: root
+    password: 123456
+  rabbitmq:
+    host: 35.193.67.118
+
   main:
     allow-bean-definition-overriding: true #当遇到同样名字的时候，是否允许覆盖注册
 eureka:

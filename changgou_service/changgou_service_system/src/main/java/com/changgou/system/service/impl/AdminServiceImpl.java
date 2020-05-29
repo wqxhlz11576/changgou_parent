@@ -1,11 +1,14 @@
 package com.changgou.system.service.impl;
 
+import com.changgou.entity.Result;
 import com.changgou.system.dao.AdminMapper;
 import com.changgou.system.service.AdminService;
-import com.changgou.pojo.Admin;
+import com.changgou.system.pojo.Admin;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
@@ -44,6 +47,11 @@ public class AdminServiceImpl implements AdminService {
      */
     @Override
     public void add(Admin admin){
+        //获取盐值
+        String gensalt = BCrypt.gensalt();
+        //加密明文密码
+        String hashpw = BCrypt.hashpw(admin.getPassword(), gensalt);
+        admin.setPassword(hashpw);
         adminMapper.insert(admin);
     }
 
@@ -54,6 +62,11 @@ public class AdminServiceImpl implements AdminService {
      */
     @Override
     public void update(Admin admin){
+        //获取盐值
+        String gensalt = BCrypt.gensalt();
+        //加密明文密码
+        String hashpw = BCrypt.hashpw(admin.getPassword(), gensalt);
+        admin.setPassword(hashpw);
         adminMapper.updateByPrimaryKey(admin);
     }
 
@@ -102,6 +115,37 @@ public class AdminServiceImpl implements AdminService {
         PageHelper.startPage(page,size);
         Example example = createExample(searchMap);
         return (Page<Admin>)adminMapper.selectByExample(example);
+    }
+
+    @Override
+    public Boolean login(Admin admin) {
+        if (admin == null) {
+            throw new RuntimeException("用户名和密码不能为空");
+        }
+        if (StringUtils.isEmpty(admin.getLoginName()) || StringUtils.isEmpty(admin.getPassword())) {
+            throw new RuntimeException("用户名和密码不能为空");
+        }
+
+        //根据用户名到数据库中获取用户数据
+        Example example = new Example(Admin.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("loginName", admin.getLoginName());
+        List<Admin> adminList = adminMapper.selectByExample(example);
+        if (adminList != null && adminList.size() >= 1) {
+            //获取数据库中的用户对象
+            Admin dbAdmin = adminList.get(0);
+            if (dbAdmin == null) {
+                throw new RuntimeException("用户不存在");
+            }
+            //判断密码是否正确
+            boolean isTrue = BCrypt.checkpw(admin.getPassword(), dbAdmin.getPassword());
+            if (isTrue) {
+                return true;
+            }
+        }
+
+
+        return false;
     }
 
     /**

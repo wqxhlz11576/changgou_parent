@@ -2,6 +2,8 @@ package com.changgou.order.controller;
 import com.changgou.entity.PageResult;
 import com.changgou.entity.Result;
 import com.changgou.entity.StatusCode;
+import com.changgou.goods.feign.SkuFeign;
+import com.changgou.order.config.TokenDecode;
 import com.changgou.order.service.OrderService;
 import com.changgou.order.pojo.Order;
 import com.github.pagehelper.Page;
@@ -17,6 +19,10 @@ public class OrderController {
 
     @Autowired
     private OrderService orderService;
+
+    @Autowired
+    private TokenDecode tokenDecode;
+
 
     /**
      * 查询全部数据
@@ -34,7 +40,7 @@ public class OrderController {
      * @return
      */
     @GetMapping("/{id}")
-    public Result findById(@PathVariable String id){
+    public Result<Order> findById(@PathVariable String id){
         Order order = orderService.findById(id);
         return new Result(true,StatusCode.OK,"查询成功",order);
     }
@@ -46,9 +52,13 @@ public class OrderController {
      * @return
      */
     @PostMapping
-    public Result add(@RequestBody Order order){
-        orderService.add(order);
-        return new Result(true,StatusCode.OK,"添加成功");
+    public Result<String> add(@RequestBody Order order){
+        Map<String, String> userMap = tokenDecode.getUserInfo();
+        String username = userMap.get("username");
+
+        order.setUsername(username);
+        String orderId = orderService.add(order);
+        return new Result(true,StatusCode.OK,"添加成功", orderId);
     }
 
 
@@ -102,6 +112,4 @@ public class OrderController {
         PageResult pageResult=new PageResult(pageList.getTotal(),pageList.getResult());
         return new Result(true,StatusCode.OK,"查询成功",pageResult);
     }
-
-
 }

@@ -5,6 +5,7 @@ import com.changgou.goods.service.SpuService;
 import com.changgou.goods.pojo.Spu;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import org.springframework.amqp.rabbit.core.RabbitMessagingTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
@@ -17,6 +18,9 @@ public class SpuServiceImpl implements SpuService {
 
     @Autowired
     private SpuMapper spuMapper;
+
+    @Autowired
+    private RabbitMessagingTemplate rabbitTemplate;
 
     /**
      * 查询全部列表
@@ -102,6 +106,26 @@ public class SpuServiceImpl implements SpuService {
         PageHelper.startPage(page,size);
         Example example = createExample(searchMap);
         return (Page<Spu>)spuMapper.selectByExample(example);
+    }
+
+    /***
+     * Shelves the goods
+     * @param spu_id spu id
+     */
+    @Override
+    public void shelveGoods(String spu_id) {
+        //1. The goods should be verified by adminstrator
+        Spu spu = spuMapper.selectByPrimaryKey(spu_id);
+        if (null == spu || spu.getStatus().equals("0")) {
+            throw new RuntimeException("The good is not reviewed, cannot shelve it");
+        }
+
+        //2. Update is_marketable to be 1
+        spu.setIsMarketable("1");
+        spuMapper.updateByPrimaryKeySelective(spu);
+
+        //3. Put spu_id into rabbitmq. Goods_up_exchange.
+        rabbitTemplate.convertAndSend("goods_up_exchange", "", spu_id);
     }
 
     /**

@@ -34,7 +34,7 @@ public class SpuController {
      * @return
      */
     @GetMapping("/{id}")
-    public Result findById(@PathVariable String id){
+    public Result<Spu> findById(@PathVariable String id){
         Spu spu = spuService.findById(id);
         return new Result(true,StatusCode.OK,"查询成功",spu);
     }
@@ -102,6 +102,4 @@ public class SpuController {
         PageResult pageResult=new PageResult(pageList.getTotal(),pageList.getResult());
         return new Result(true,StatusCode.OK,"查询成功",pageResult);
     }
-
-
 }

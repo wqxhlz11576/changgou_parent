@@ -104,6 +104,11 @@ public class BrandServiceImpl implements BrandService {
         return (Page<Brand>)brandMapper.selectByExample(example);
     }
 
+    @Override
+    public List<Brand> findByCategoryName(String categoryName) {
+        return brandMapper.selectByCategoryName(categoryName);
+    }
+
     /**
      * 构建查询对象
      * @param searchMap

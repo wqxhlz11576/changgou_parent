@@ -1,11 +1,17 @@
 package com.changgou.goods.service.impl;
 
 import com.changgou.goods.dao.SkuMapper;
+import com.changgou.goods.dao.SpuMapper;
+import com.changgou.goods.pojo.Spu;
 import com.changgou.goods.service.SkuService;
 import com.changgou.goods.pojo.Sku;
+import com.changgou.order.pojo.OrderItem;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import org.springframework.amqp.rabbit.core.RabbitMessagingTemplate;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
@@ -17,6 +23,9 @@ public class SkuServiceImpl implements SkuService {
 
     @Autowired
     private SkuMapper skuMapper;
+
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     /**
      * 查询全部列表
@@ -102,6 +111,26 @@ public class SkuServiceImpl implements SkuService {
         PageHelper.startPage(page,size);
         Example example = createExample(searchMap);
         return (Page<Sku>)skuMapper.selectByExample(example);
+    }
+
+    @Override
+    public List<Sku> findSkuListBySpuId(String spuId) {
+        Example example = new Example(Sku.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("spuId", spuId);
+        List<Sku> skuList = skuMapper.selectByExample(example);
+        return skuList;
+    }
+
+    @Override
+    public void decrCount(String username) {
+        List<OrderItem> orderItems = (List<OrderItem>) redisTemplate.boundHashOps("cart_" + username).get("orderItemList");
+        for (OrderItem item : orderItems) {
+            int count = skuMapper.decrCount(orderItems);
+            if (count <= 0) {
+                throw new RuntimeException("The item is not available");
+            }
+        }
     }
 
     /**

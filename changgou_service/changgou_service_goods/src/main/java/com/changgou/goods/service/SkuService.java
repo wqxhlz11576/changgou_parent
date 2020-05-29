@@ -63,7 +63,11 @@ public interface SkuService {
      */
     Page<Sku> findPage(Map<String, Object> searchMap, int page, int size);
 
+    /***
+     * get sku list by spuId
+     * @return
+     */
+    List<Sku> findSkuListBySpuId(String spuId);
 
-
-
+    void decrCount(String username);
 }

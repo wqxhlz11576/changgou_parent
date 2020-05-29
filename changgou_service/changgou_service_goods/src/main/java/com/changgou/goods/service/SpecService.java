@@ -63,7 +63,10 @@ public interface SpecService {
      */
     Page<Spec> findPage(Map<String, Object> searchMap, int page, int size);
 
-
-
-
+    /***
+     * search specification list by category name
+     * @param categoryName
+     * @return
+     */
+    List<Map> findListByCategoryName(String categoryName);
 }

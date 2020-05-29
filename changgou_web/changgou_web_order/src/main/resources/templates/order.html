@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=9; IE=8; IE=7; IE=EDGE">
+	<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
+	<title>结算页</title>
+    <link rel="stylesheet" type="text/css" href="/css/all.css" />
+    <link rel="stylesheet" type="text/css" href="/css/pages-getOrderInfo.css" />
+</head>
+
+<body>
+	<!--head-->
+	<!-- 头部栏位 -->
+	<!--页面顶部-->
+<div id="nav-bottom">
+	<!--顶部-->
+	<div class="nav-top">
+		<div class="top">
+			<div class="py-container">
+				<div class="shortcut">
+					<ul class="fl">
+						<li class="f-item">Welcome！</li>
+						<li class="f-item">Please <a href="login.html" target="_blank">Sign in</a>　<span><a href="register.html" target="_blank">Register</a></span></li>
+					</ul>
+					<div class="fr typelist">
+						<ul class="types">
+							<li class="f-item"><span>Orders</span></li>
+							
+							<li class="f-item"><span><a href="cart.html" target="_blank">Cart</a></span></li>
+						</ul>
+					</div>
+					
+				</div>
+			</div>
+		</div>
+
+		<!--头部-->
+		<div class="header">
+			<div class="py-container">
+				<div class="yui3-g Logo">
+					<div class="yui3-u Left logoArea">
+						<a class="logo-bd" title="Changgou" href="index.html" target="_blank"></a>
+					</div>
+					<div class="yui3-u Rit searchArea">
+						<div class="search">
+							<form action="" class="sui-form form-inline">
+								<!--searchAutoComplete-->
+								<div class="input-append">
+									<input type="text" id="autocomplete" class="input-error input-xxlarge" />
+									<button class="sui-btn btn-xlarge btn-danger" type="button">Search</button>
+								</div>
+							</form>
+						</div>
+					</div>
+					
+				</div>
+
+			</div>
+		</div>
+	</div>
+</div>
+
+
+	<div class="cart py-container" id="app">
+		<!--主内容-->
+		<div class="checkout py-container">
+			<div class="checkout-tit">
+				<h4 class="tit-txt">Order Information</h4>
+			</div>
+			<div class="checkout-steps">
+				<!--收件人信息-->
+				<div class="step-tit">
+					<h5>Shipping Address<span></span></h5>
+				</div>
+				<div class="step-cont">
+					<div class="addressInfo">
+						<ul class="addr-detail">
+							<li class="addr-item">
+
+								<div class="choose-address"  th:each="addr:${address}">
+									<div class="con name " th:@click="|chooseAddr('${addr.contact}','${addr.phone}','${addr.address}')|" th:classappend="${addr.isDefault}==1?'selected':''"><a href="javascript:;" ><em th:text="${addr.contact}"></em><span title="点击取消选择"></span></a></div>
+									<div class="con address">
+										<span class="place"><em th:text="${addr.address}"></em></span>
+										<span class="phone"><em th:text="${addr.phone}"></em></span>
+										<span class="base" th:if="${addr.isDefault}==1">Default</span>
+									</div>	
+									<div class="clearfix"></div>									
+								</div>
+								
+
+							</li>							
+						</ul>						
+						 <!--确认地址-->
+					</div>				
+				</div>
+				<div class="hr"></div>
+				<!--支付和送货-->
+				<div class="payshipInfo">
+					<div class="step-tit">
+						<h5>Pay With</h5>
+					</div>
+					<div class="step-cont">
+						<ul class="payType">
+							<li class="selected" th:@click="|order.payType=1|">Wechat<span title="Click to cancel"></span></li>
+							<li th:@click="|order.payType=0|">Credit Card<span title="Click to cancel"></span></li>
+						</ul>
+					</div>
+					<div class="hr"></div>
+					<div class="step-tit">
+						<h5>Item List</h5>
+					</div>
+					<div class="step-cont">
+						<ul class="send-detail">
+							<li>
+								<div class="sendType">
+									<span>Shipping：</span>
+									<ul>
+										<li>
+											<div class="con express">UPS</div>
+											<div class="con delivery">Arrives： April 1</div>
+										</li>
+									</ul>
+								</div>
+								<div class="sendGoods">
+									<span>Item List：</span>
+
+									<ul class="yui3-g" th:each="item:${carts}">
+										<li class="yui3-u-1-6">
+											<span><img th:src="${item.image}"></span>
+										</li>
+										<li class="yui3-u-7-12">
+											<div class="desc"><em th:text="${item.name}"></em></div>
+											<div class="seven">Return for free</div>
+										</li>
+										<li class="yui3-u-1-12">
+											<div class="price">$<em th:text="${item.price}"></em>.00</div>
+										</li>
+										<li class="yui3-u-1-12">
+											<div class="num">X<em th:text="${item.num}"></em></div>
+										</li>
+										<li class="yui3-u-1-12">
+											<div class="exit">Available</div>
+										</li>
+										
+										
+									</ul>
+								</div>
+								<div class="buyMessage">
+									<span>Note：</span>
+									<textarea placeholder="Please confirm with the seller" class="remarks-cont"></textarea>
+								</div>
+							</li>
+							<li></li>
+							<li></li>
+						</ul>
+					</div>
+					<div class="hr"></div>
+				</div>
+
+				<div class="cardInfo">
+					<div class="step-tit">
+						<h5>Coupon</h5>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="order-summary">
+			<div class="static fr">
+				<div class="list">
+					<span><i class="number"><em th:text="${totalNum}"></em></i> item(s), Total</span>
+					<em class="allprice">¥<em th:text="${totalMoney}"></em>.00</em>
+				</div>
+				<div class="list">
+					<span>Save：</span>
+					<em class="money">0.00</em>
+				</div>
+				<div class="list">
+					<span>Shipping：</span>
+					<em class="transport">0.00</em>
+				</div>
+			</div>
+		</div>
+		<div class="clearfix trade">
+			<div class="fc-price">Total:　<span class="price">¥<em th:text="${totalMoney}"></em>.00</span></div>
+			<div class="fc-receiverInfo">
+				To:
+				<span id="receive-address">{{order.receiveAddress}}</span>
+				<span id="receive-name">{{order.receiveContact}}</span>
+				<span id="receive-phone">{{order.receiveMobile}}</span>
+			</div>
+		</div>
+		<div class="submit">
+			<a class="sui-btn btn-danger btn-xlarge" href="javascript:void(0)" @click="add()">Submit</a>
+		</div>
+	</div>
+	<!-- 底部栏位 -->
+	<!--页面底部-->
+<!--页面底部END-->
+<script type="text/javascript" src="/js/plugins/jquery/jquery.min.js"></script>
+<script type="text/javascript" src="/js/vue.js"></script>
+<script type="text/javascript" src="/js/axios.js"></script>
+
+<script>
+
+
+$(function(){
+	$(".address").hover(function(){
+		$(this).addClass("address-hover");	
+	},function(){
+		$(this).removeClass("address-hover");	
+	});
+	
+	$(".choose-address .name").click(function(){
+		 $(this).addClass("selected");
+		 $(this).parent().siblings().children('.name').removeClass("selected");
+		 var place = $(this).siblings('.address').children('.place').text();
+		 var phone = $(this).siblings('.address').children('.phone').text();
+		 $("#receive-name").text($(this).text());
+		 $("#receive-address").text(place);
+		 $("#receive-phone").text(phone)
+	});
+	$(".payType li").click(function(){
+		 $(this).toggleClass("selected").siblings().removeClass("selected");	
+	});
+})
+
+
+</script>
+<script th:inline="javascript">
+	var app = new Vue({
+		el:"#app",
+		data:{
+			order:{"receiveContact":[[${defAddr.contact}]],"receiveMobile":[[${defAddr.phone}]],"receiveAddress":[[${defAddr.address}]],"payType":1}
+		},
+		methods:{
+			chooseAddr:function (contact,mobile,address) {
+				app.$set(app.order,"receiveContact",contact);
+				app.$set(app.order,"receiveMobile",mobile);
+				app.$set(app.order,"receiveAddress",address);
+			},
+			add:function () {
+				axios.post("/api/worder/add",this.order).then(function (response) {
+					if (response.data.flag){
+						var orderId = response.data.data;
+						window.location="/api/wxpay?orderId="+orderId;
+					} else{
+						alert("下单失败");
+					}
+				})
+			}
+		}
+	})
+</script>
+
+</body>
+
+</html>

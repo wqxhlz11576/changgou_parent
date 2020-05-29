@@ -63,7 +63,9 @@ public interface SpuService {
      */
     Page<Spu> findPage(Map<String, Object> searchMap, int page, int size);
 
-
-
-
+    /***
+     *
+     * @param id
+     */
+    void shelveGoods(String id);
 }

@@ -9,6 +9,7 @@ import tk.mybatis.spring.annotation.MapperScan;
 @EnableEurekaClient
 @MapperScan(basePackages = {"com.changgou.system.dao"})
 public class SystemApplication {
+
     public static void main(String[] args) {
         SpringApplication.run( SystemApplication.class);
     }

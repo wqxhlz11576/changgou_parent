@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -102,6 +103,23 @@ public class SpecServiceImpl implements SpecService {
         PageHelper.startPage(page,size);
         Example example = createExample(searchMap);
         return (Page<Spec>)specMapper.selectByExample(example);
+    }
+
+    /***
+     * find specition
+     * @param categoryName
+     * @return
+     */
+    @Override
+    public List<Map> findListByCategoryName(String categoryName) {
+        List<Map> specList = specMapper.selectByCategoryName(categoryName);
+        if (specList != null) {
+            for (Map spec : specList) {
+                String[] options = String.valueOf(spec.get("options")).split(",");
+                spec.put("options", options);
+            }
+        }
+        return specList;
     }
 
     /**

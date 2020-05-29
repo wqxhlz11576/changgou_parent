@@ -34,7 +34,7 @@ public class SkuController {
      * @return
      */
     @GetMapping("/{id}")
-    public Result findById(@PathVariable String id){
+    public Result<Sku> findById(@PathVariable String id){
         Sku sku = skuService.findById(id);
         return new Result(true,StatusCode.OK,"查询成功",sku);
     }
@@ -103,5 +103,20 @@ public class SkuController {
         return new Result(true,StatusCode.OK,"查询成功",pageResult);
     }
 
+    /***
+     * get skulist by spuid
+     * @param spuId
+     * @return
+     */
+    @GetMapping("/search/spuId/{spuId}")
+    public List<Sku> findSkuListBySpuId(@RequestParam("spuId") String spuId) {
+        List<Sku> skuList= skuService.findSkuListBySpuId(spuId);
+        return skuList;
+    }
 
+    @PostMapping("/decr/count")
+    public Result decrCount(@RequestParam("username") String username) {
+        skuService.decrCount(username);
+        return new Result(true, StatusCode.OK, "Decrease sku successfully");
+    }
 }

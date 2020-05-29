@@ -103,5 +103,15 @@ public class SpecController {
         return new Result(true,StatusCode.OK,"查询成功",pageResult);
     }
 
+    /***
+     *Find specification list according to category name
+     *
+     */
+    @GetMapping(value = "/categoryName/{categoryName}")
+    List<Map> findListByCategoryName(@PathVariable("categoryName") String categoryName) {
+        List<Map> specList = specService.findListByCategoryName(categoryName);
+        return specList;
+    }
+
 
 }

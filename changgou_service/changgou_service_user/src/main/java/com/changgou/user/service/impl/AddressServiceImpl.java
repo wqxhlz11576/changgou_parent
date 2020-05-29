@@ -104,6 +104,13 @@ public class AddressServiceImpl implements AddressService {
         return (Page<Address>)addressMapper.selectByExample(example);
     }
 
+    @Override
+    public List<Address> list(String username) {
+        Address address = new Address();
+        address.setUsername(username);
+        return addressMapper.select(address);
+    }
+
     /**
      * 构建查询对象
      * @param searchMap

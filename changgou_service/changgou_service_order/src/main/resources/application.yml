@@ -5,15 +5,23 @@ spring:
     name: order
   datasource:
     driver-class-name: com.mysql.jdbc.Driver
-    url: jdbc:mysql://192.168.200.128:3306/changgou_order?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
+    url: jdbc:mysql://35.193.67.118:3306/changgou_order?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
     username: root
-    password: root
+    password: 123456
   main:
     allow-bean-definition-overriding: true #当遇到同样名字的时候，是否允许覆盖注册
+  redis:
+    host: 35.193.67.118
+    port: 6379
+    password: 123456
+  rabbitmq:
+    host: 35.193.67.118
+    username: guest
+    password: WQxhlz922100!
 eureka:
   client:
     service-url:
-      defaultZone: http://127.0.0.1:6868/eureka
+      defaultZone: http://35.193.67.118:6868/eureka
   instance:
     prefer-ip-address: true
 feign:
@@ -29,11 +37,7 @@ hystrix:
   command:
     default:
       execution:
-        timeout:
-          #如果enabled设置为false，则请求超时交给ribbon控制
-          enabled: true
         isolation:
-          strategy: SEMAPHORE
           thread:
-            # 熔断器超时时间，默认：1000/毫秒
-            timeoutInMilliseconds: 20000
+            timeoutInMilliseconds: 10000
+          strategy: SEMAPHORE

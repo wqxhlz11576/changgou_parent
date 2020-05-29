@@ -1,0 +1,49 @@
+server:
+  port: 9104
+eureka:
+  client:
+    service-url:
+      defaultZone: http://35.193.67.118:6868/eureka
+  instance:
+    prefer-ip-address: true
+
+feign:
+  hystrix:
+    enabled: true
+spring:
+  jackson:
+    time-zone: GMT+8
+  thymeleaf:
+    cache: false
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://35.193.67.118:3306/changgou_seckill?useUnicode=true&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&serverTimezone=GMT%2b8
+    username: root
+    password: 123456
+  main:
+    allow-bean-definition-overriding: true #当遇到同样名字的时候，是否允许覆盖注册
+  redis:
+    host: 35.193.67.118
+    password: 123456
+  rabbitmq:
+    host: 35.193.67.118
+    password: WQxhlz922100!
+  application:
+    name: seckill-web
+#hystrix 配置
+hystrix:
+  command:
+    default:
+      execution:
+        timeout:
+          #如果enabled设置为false，则请求超时交给ribbon控制
+          enabled: true
+        isolation:
+          strategy: SEMAPHORE
+          thread:
+            timeoutInMilliseconds: 60000
+#请求处理的超时时间
+ribbon:
+  ReadTimeout: 4000
+  #请求连接的超时时间
+  ConnectTimeout: 3000
